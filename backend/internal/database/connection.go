@@ -11,7 +11,7 @@ import (
 func connect() (*pgxpool.Pool, error) {
 	conn, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		fmt.Printf("Unable to connect to database: %v\n", err)
 		return nil, err
 	}
 	return conn, nil

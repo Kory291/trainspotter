@@ -2,7 +2,7 @@ package partials
 
 import (
 	"strings"
-	"trainspotter/components"
+	"trainspotter-frontend/components"
 
 	"github.com/maddalax/htmgo/framework/h"
 )

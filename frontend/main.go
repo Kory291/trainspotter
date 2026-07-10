@@ -7,7 +7,7 @@ import (
 	"github.com/maddalax/htmgo/framework/service"
 	"io/fs"
 	"net/http"
-	"trainspotter/__htmgo"
+	"trainspotter-frontend/__htmgo"
 )
 
 func main() {

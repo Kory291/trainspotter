@@ -5,7 +5,7 @@ package main
 
 import (
 	"io/fs"
-	"trainspotter/internal/embedded"
+	"trainspotter-frontend/internal/embedded"
 )
 
 func GetStaticAssets() fs.FS {

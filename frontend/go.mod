@@ -1,4 +1,4 @@
-module trainspotter
+module trainspotter-frontend
 
 go 1.23.0
 

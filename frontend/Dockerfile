@@ -35,4 +35,4 @@ EXPOSE 3000
 
 
 # Command to run the binary
-CMD ["./trainspottertmp"]
+CMD ["./trainspotter-frontend.tmp"]

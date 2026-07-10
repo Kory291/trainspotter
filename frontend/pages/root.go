@@ -2,14 +2,14 @@ package pages
 
 import (
 	"github.com/maddalax/htmgo/framework/h"
-	"trainspotter/__htmgo/assets"
+	"trainspotter-frontend/__htmgo/assets"
 )
 
 func RootPage(children ...h.Ren) *h.Page {
 	title := "Trainspotter Frontend"
 	description := "A simple frontend for my trainspotter project, built with htmgo."
 	author := "Kory291"
-	url := "https://github.com/maddalax/trainspotter"
+	url := "https://github.com/Kory291/trainspotter"
 
 	return h.NewPage(
 		h.Html(

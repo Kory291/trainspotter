@@ -2,7 +2,7 @@ package pages
 
 import (
 	"time"
-	"trainspotter/components"
+	"trainspotter-frontend/components"
 
 	"github.com/maddalax/htmgo/framework/h"
 )

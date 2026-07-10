@@ -1,8 +1,8 @@
 package pages
 
 import (
-	"trainspotter/components"
-	"trainspotter/partials"
+	"trainspotter-frontend/components"
+	"trainspotter-frontend/partials"
 
 	"github.com/maddalax/htmgo/framework/h"
 )

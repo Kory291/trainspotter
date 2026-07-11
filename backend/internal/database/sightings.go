@@ -1,7 +1,6 @@
 package database
 
 import (
-	"context"
 	"time"
 	"fmt"
 
@@ -16,22 +15,12 @@ type Sighting struct{
 } 
 
 func GetSightingsFromDB() (sightings []Sighting, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
-	defer cancel()
 	
-	conn, err := connect()
+	rows, err := queryDB(`SELECT id, place, date, train FROM sightings;`)
 	if err != nil {
-		fmt.Println("Couldnt connect to DB")
+		fmt.Printf("There was an error querying the db %v\n", err)
 		return nil, err
 	}
-
-	rows, err := conn.Query(ctx, `SELECT id, place, date, train FROM sightings;`)
-	if err != nil {
-		fmt.Printf("had a problem querying the DB %v\n", err)
-		return nil, err
-	}
-	defer rows.Close()
-
 	sightings, err = pgx.CollectRows(rows, func(row pgx.CollectableRow) (Sighting, error) {
 		var s Sighting
 		err := row.Scan(&s.Id, &s.Place, &s.Date, &s.Train)
@@ -42,4 +31,16 @@ func GetSightingsFromDB() (sightings []Sighting, err error) {
 		return nil, err
 	}
 	return sightings, nil
+}
+
+func AddSightingToDB(sighting Sighting) (err error) {
+
+	formattedQuery := fmt.Sprintf("INSERT INTO sightings (place, date, train) VALUES ('%v', '%d-%d-%d', '%v')", sighting.Place, sighting.Date.Year(), sighting.Date.Month(), sighting.Date.Day(), sighting.Train)
+	fmt.Printf("Applying ... %s", formattedQuery)
+	_, err = queryDB(formattedQuery)
+	if err != nil {
+		fmt.Printf("There was an error when inserting into the DB %v\n", err)
+		return err
+	}
+	return nil
 }

@@ -1,10 +1,11 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"trainspotter-backend/internal/database"
-	"encoding/json"
 )
 
 func GetSightings(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +26,12 @@ func GetSightings(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostSighting(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`Will add a new sighting and return the created sighting in JSON format`))
+	var sighting database.Sighting
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		fmt.Printf("There went something wrong: %v", err)
+		http.Error(w, "Body was malformed", 400)
+	}
+	json.Unmarshal(requestBody, &sighting)
+	database.AddSightingToDB(sighting)
 }

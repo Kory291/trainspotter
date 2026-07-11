@@ -35,6 +35,6 @@ func queryDB(query string) (pgx.Rows, error) {
 		fmt.Printf("had a problem querying the DB %v\n", err)
 		return nil, err
 	}
-	defer rows.Close()
+	
 	return rows, nil
 }

@@ -31,7 +31,12 @@ func PostSighting(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("There went something wrong: %v", err)
 		http.Error(w, "Body was malformed", 400)
+		return
 	}
 	json.Unmarshal(requestBody, &sighting)
-	database.AddSightingToDB(sighting)
+	err = database.AddSightingToDB(sighting)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }

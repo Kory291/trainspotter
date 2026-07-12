@@ -16,7 +16,7 @@ type Sighting struct{
 
 func GetSightingsFromDB() (sightings []Sighting, err error) {
 	
-	rows, err := queryDB(`SELECT id, place, date, train FROM sightings;`)
+	rows, err := queryDB("SELECT id, place, date, train FROM sightings;")
 	if err != nil {
 		rows.Close()
 		fmt.Printf("There was an error querying the db %v\n", err)

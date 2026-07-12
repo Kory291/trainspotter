@@ -3,8 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"strconv"
 	"trainspotter-backend/internal/database"
 )
 
@@ -32,13 +32,24 @@ func GetTrains(w http.ResponseWriter, r *http.Request) {
 func PostTrain(w http.ResponseWriter, r *http.Request) {
 	var train database.Train
 
-	requestBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		fmt.Printf("There was an error when reading request body to add train ... %v\n", err)
-		http.Error(w, "Body was malformed", 400)
+	tz := r.FormValue("tz")
+	if tz == "" {
+		fmt.Printf("There was no tz detected\n")
+		http.Error(w, "Malformed Data was provided", 400)
 		return
 	}
-	json.Unmarshal(requestBody, &train)
+	tzInt, err := strconv.Atoi(tz)
+	if err != nil {
+		fmt.Printf("There was an error ... %v", err)
+		http.Error(w, "Malformed Data was provided", 400)
+		return
+	}
+	train.Tz = tzInt
+
+	train.Baureihe = r.FormValue("baureihe")
+	name := r.FormValue("name")
+	train.Name = &name
+
 	err = database.AddTrainToDB(train)
 	if err != nil {
 		fmt.Printf("There was something wrong when running the Post to DB function %v\n", err)

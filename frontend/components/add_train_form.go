@@ -31,15 +31,18 @@ func AddTrainForm() *h.Element {
 		),
 		h.Form(
 			h.Method("post"),
-			h.Action("/trains"),
+			h.Action("#"),
+			h.Attribute("id", "add-train-form"),
+			h.Attribute("onSubmit", "event.preventDefault(); submitTrainForm(this);"),
 			h.Class("flex flex-col gap-4"),
-			formField("TZ Number", "tz_number", "e.g. 9001"),
+			formField("TZ Number", "tz", "e.g. 9001"),
 			formField("Baureihe", "baureihe", "e.g. ICE 3"),
 			formField("Name", "name", "e.g. München"),
 			h.Button(
 				h.Type("submit"),
 				h.Class("mt-2 bg-prussian text-champagne font-semibold rounded px-4 py-2 hover:bg-vermilion transition-colors"),
 				h.Text("Add Train"),
+				
 			),
 		),
 	)

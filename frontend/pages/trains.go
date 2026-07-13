@@ -12,7 +12,7 @@ func TrainsPage(ctx *h.RequestContext) *h.Page {
 		components.Nav(ctx),
 		h.Div(
 			h.Class("p-6 max-w-2xl mx-auto flex flex-col gap-8"),
-			components.AddTrainForm(),
+			partials.AddTrainForm(),
 			h.Div(
 				h.Class("flex flex-col gap-4"),
 				h.H2(

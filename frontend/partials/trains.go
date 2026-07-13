@@ -1,6 +1,8 @@
 package partials
 
 import (
+	"net/http"
+	"net/url"
 	"strings"
 	"trainspotter-frontend/components"
 
@@ -54,4 +56,55 @@ func TrainList(trains []components.Train) *h.Element {
 			return components.TrainCard(t)
 		}),
 	)
+}
+
+func AddTrainForm() *h.Element {
+	return h.Div(
+		h.Class("bg-white border border-saffron rounded-lg shadow-sm p-6"),
+		h.H2(
+			h.Class("text-lg font-bold text-prussian mb-4"),
+			h.Text("Add a Train"),
+		),
+		h.Form(
+			h.Attribute("id", "add-train-form"),
+			h.PostPartial(AddTrainPartial),
+			h.HxTarget("#train-list"),
+			h.Class("flex flex-col gap-4"),
+			components.FormField("TZ Number", "tz", "e.g. 9001"),
+			components.FormField("Baureihe", "baureihe", "e.g. ICE 3"),
+			components.FormField("Name", "name", "e.g. München"),
+			h.Button(
+				h.Type("submit"),
+				h.Class("mt-2 bg-prussian text-champagne font-semibold rounded px-4 py-2 hover:bg-vermilion transition-colors"),
+				h.Text("Add Train"),
+			),
+		),
+	)
+}
+
+func AddTrainPartial(ctx *h.RequestContext) *h.Partial {
+	tz := ctx.FormValue("tz")
+	baureihe := ctx.FormValue("baureihe")
+	name := ctx.FormValue("name")
+
+	resp, err := http.PostForm("http://localhost:8080/trains", url.Values{
+		"tz":       {tz},
+		"baureihe": {baureihe},
+		"name":     {name},
+	})
+	if err != nil || resp.StatusCode >= 400 {
+		return h.NewPartial(h.Div(
+			h.Id("train-list"),
+			h.Class("text-vermilion text-sm"),
+			h.Text("Error adding train. Please try again."),
+		))
+	}
+
+	knownTrains = append(knownTrains, components.Train{
+		TZNumber: tz,
+		Baureihe: baureihe,
+		Name:     name,
+	})
+
+	return h.NewPartial(TrainList(knownTrains))
 }

@@ -33,25 +33,6 @@ func RootPage(children ...h.Ren) *h.Page {
 				h.Meta("og:description", description),
 				h.Link(assets.MainCss, "stylesheet"),
 				h.Script(assets.HtmgoJs),
-				h.Script(`
-					function submitTrainForm(form) {
-						const formData = new FormData(form);
-						fetch("http://localhost:8080/trains", {
-							method: "POST",
-							headers: { "Content-Type": "application/x-www-form-urlencoded" },
-							body: new URLSearchParams(formData).toString()
-						})
-							.then((response) => {
-								if (!response.ok) {
-									throw new Error("Request failed");
-								}
-								form.reset();
-							})
-							.catch((error) => {
-								console.error(error);
-							});
-					}
-				`),
 			),
 			h.Body(
 				h.Div(

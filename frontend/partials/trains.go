@@ -1,26 +1,30 @@
 package partials
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"trainspotter-frontend/components"
-
+	"fmt"
+	"strconv"
+	"slices"
 	"github.com/maddalax/htmgo/framework/h"
 )
 
 // KnownTrains holds placeholder trains – replace with real data once the backend is connected.
 var knownTrains = []components.Train{
-	{TZNumber: "9001", Baureihe: "ICE 3", Name: "München"},
-	{TZNumber: "9002", Baureihe: "ICE 3", Name: "Hamburg"},
-	{TZNumber: "9003", Baureihe: "ICE 3", Name: "Berlin"},
-	{TZNumber: "9023", Baureihe: "ICE 3neo", Name: "Frankfurt"},
-	{TZNumber: "9047", Baureihe: "ICE 3neo", Name: "Köln"},
-	{TZNumber: "9071", Baureihe: "ICE 3neo", Name: "Stuttgart"},
-	{TZNumber: "9105", Baureihe: "ICE 4", Name: "Nürnberg"},
-	{TZNumber: "9012", Baureihe: "ICE 4", Name: "Dresden"},
-	{TZNumber: "9034", Baureihe: "ICE 1", Name: "Hannover"},
-	{TZNumber: "9088", Baureihe: "ICE 1", Name: "Mannheim"},
+// 	{TZNumber: "9001", Baureihe: "ICE 3", Name: "München"},
+// 	{TZNumber: "9002", Baureihe: "ICE 3", Name: "Hamburg"},
+// 	{TZNumber: "9003", Baureihe: "ICE 3", Name: "Berlin"},
+// 	{TZNumber: "9023", Baureihe: "ICE 3neo", Name: "Frankfurt"},
+// 	{TZNumber: "9047", Baureihe: "ICE 3neo", Name: "Köln"},
+// 	{TZNumber: "9071", Baureihe: "ICE 3neo", Name: "Stuttgart"},
+// 	{TZNumber: "9105", Baureihe: "ICE 4", Name: "Nürnberg"},
+// 	{TZNumber: "9012", Baureihe: "ICE 4", Name: "Dresden"},
+// 	{TZNumber: "9034", Baureihe: "ICE 1", Name: "Hannover"},
+// 	{TZNumber: "9088", Baureihe: "ICE 1", Name: "Mannheim"},
 }
 
 func TrainListPartial(ctx *h.RequestContext) *h.Partial {
@@ -28,7 +32,8 @@ func TrainListPartial(ctx *h.RequestContext) *h.Partial {
 
 	var filtered []components.Train
 	for _, t := range knownTrains {
-		if query == "" || strings.Contains(t.TZNumber, query) {
+		tzStr := strconv.Itoa(t.Tz)
+		if query == "" || strings.Contains(tzStr, query) {
 			filtered = append(filtered, t)
 		}
 	}
@@ -38,6 +43,23 @@ func TrainListPartial(ctx *h.RequestContext) *h.Partial {
 
 // GetKnownTrains returns the current list of trains.
 func GetKnownTrains() []components.Train {
+	// return knownTrains
+	resp, err := http.Get("http://localhost:8080/trains")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	// Parse the response body and return the list of trains
+	// This is a placeholder – replace with actual parsing logic
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(body, &knownTrains)
+	slices.SortStableFunc(knownTrains, func(trainA components.Train, trainB components.Train) int {
+		return trainA.Tz - trainB.Tz
+	})  
 	return knownTrains
 }
 
@@ -71,7 +93,7 @@ func AddTrainForm() *h.Element {
 			h.HxTarget("#train-list"),
 			h.Class("flex flex-col gap-4"),
 			components.FormField("TZ Number", "tz", "e.g. 9001"),
-			components.FormField("Baureihe", "baureihe", "e.g. ICE 3"),
+			components.FormField("Baureihe", "baureihe", "e.g. 407"),
 			components.FormField("Name", "name", "e.g. München"),
 			h.Button(
 				h.Type("submit"),
@@ -99,9 +121,16 @@ func AddTrainPartial(ctx *h.RequestContext) *h.Partial {
 			h.Text("Error adding train. Please try again."),
 		))
 	}
-
+	tzInt, err := strconv.Atoi(tz)
+	if err != nil {
+		return h.NewPartial(h.Div(
+			h.Id("train-list"),
+			h.Class("text-vermilion text-sm"),
+			h.Text("Invalid TZ number. Please enter a valid integer."),
+		))
+	}
 	knownTrains = append(knownTrains, components.Train{
-		TZNumber: tz,
+		Tz:       tzInt,
 		Baureihe: baureihe,
 		Name:     name,
 	})

@@ -5,9 +5,9 @@ import (
 )
 
 type Train struct {
-	TZNumber string
-	Baureihe string
-	Name     string
+	Tz int	`json:"tz"`
+	Baureihe string `json:"baureihe"`
+	Name     string `json:"name"`
 }
 
 func TrainCard(t Train) *h.Element {
@@ -17,7 +17,7 @@ func TrainCard(t Train) *h.Element {
 			h.Class("flex items-center justify-between"),
 			h.Span(
 				h.Class("text-lg font-bold text-prussian"),
-				h.TextF("TZ %s", t.TZNumber),
+				h.TextF("TZ %d", t.Tz),
 			),
 			h.Span(
 				h.Class("text-sm font-medium text-ochre"),

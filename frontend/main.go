@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/maddalax/htmgo/framework/config"
-	"github.com/maddalax/htmgo/framework/h"
-	"github.com/maddalax/htmgo/framework/service"
 	"io/fs"
 	"net/http"
 	"trainspotter-frontend/__htmgo"
+
+	"github.com/maddalax/htmgo/framework/config"
+	"github.com/maddalax/htmgo/framework/h"
+	"github.com/maddalax/htmgo/framework/service"
 )
 
 func main() {

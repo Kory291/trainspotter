@@ -8,10 +8,9 @@ import (
 	"trainspotter-backend/internal/database"
 )
 
-
 func GetTrains(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	
+
 	trains, err := database.GetTrainsFromDB()
 	if err != nil {
 		fmt.Printf("There was an error when getting the trains from the DB %v\n", err)
@@ -56,4 +55,5 @@ func PostTrain(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }

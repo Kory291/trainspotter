@@ -7,9 +7,9 @@ import (
 )
 
 type Sight struct {
-	Train    string
-	Location string
-	Date     time.Time
+	Train    int `json:"train"`
+	Place string `json:"place"`
+	Date     time.Time `json:"date"`
 }
 
 func SightCard(s Sight) *h.Element {
@@ -19,7 +19,7 @@ func SightCard(s Sight) *h.Element {
 			h.Class("flex items-center justify-between"),
 			h.Span(
 				h.Class("text-lg font-bold text-prussian"),
-				h.Text(s.Train),
+				h.TextF("TZ %d", s.Train),
 			),
 			h.Span(
 				h.Class("text-sm text-gray-500"),
@@ -30,7 +30,7 @@ func SightCard(s Sight) *h.Element {
 			h.Class("flex items-center gap-1 text-sm text-prussian"),
 			h.Span(
 				h.Class("font-medium"),
-				h.Text(s.Location),
+				h.Text(s.Place),
 			),
 		),
 	)

@@ -6,17 +6,32 @@ import (
 	"io"
 	"net/http"
 	"trainspotter-backend/internal/database"
+	"time"
 )
+
+type ReturnedSighting struct {
+	Train int `json:"train"`
+	Place string `json:"place"`
+	Date time.Time `json:"date"`
+}
 
 func GetSightings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	var returnedSightings []ReturnedSighting
 	sightings, err := database.GetSightingsFromDB()
 	if err != nil {
 		fmt.Println("There was something wrong when getting the sightings")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	jsonResponse, err := json.Marshal(sightings)
+	for _, sighting := range sightings {
+		returnedSightings = append(returnedSightings, ReturnedSighting{
+			Train: sighting.Train,
+			Place: sighting.Place,
+			Date: sighting.Date,
+		})
+	}
+	jsonResponse, err := json.Marshal(returnedSightings)
 	if err != nil {
 		fmt.Println("Could not convert data to json")
 		w.WriteHeader(http.StatusInternalServerError)

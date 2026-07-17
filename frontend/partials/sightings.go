@@ -15,7 +15,7 @@ import (
 var knownSightings = []components.Sight{}
 
 func GetSightings() (sightings []components.Sight) {
-	resp, err := http.Get("http://localhost:8080/sightings")
+	resp, err := http.Get(backendURL() + "/sightings")
 	if err != nil {
 		panic(err)
 	}
@@ -66,7 +66,7 @@ func PostSightingPartial(ctx *h.RequestContext) *h.Partial {
 		h.Text("Invalid TZ number. Please enter a valid integer"),
 	))
 
-	resp, err := http.PostForm("http://localhost:8080/sightings", url.Values{
+	resp, err := http.PostForm(backendURL()+"/sightings", url.Values{
 		"place": {place},
 		"date":  {date},
 		"tz":    {tz},

@@ -1,9 +1,7 @@
 # Stage 1: Build the Go binary
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
-RUN apk update
-RUN apk add git
-RUN apk add curl
+RUN apk update && apk add --no-cache git curl
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -18,7 +16,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go binary for Linux
-RUN GOPRIVATE=github.com/maddalax GOPROXY=direct go run github.com/maddalax/htmgo/cli/htmgo@latest build
+RUN CGO_ENABLED=0 GOPRIVATE=github.com/maddalax GOPROXY=direct go run github.com/maddalax/htmgo/cli/htmgo@latest build
 
 
 # Stage 2: Create the smallest possible image
@@ -35,4 +33,5 @@ EXPOSE 3000
 
 
 # Command to run the binary
-CMD ["./trainspotter-frontend.tmp"]
+ENTRYPOINT ["./trainspotter-frontend"]
+CMD []

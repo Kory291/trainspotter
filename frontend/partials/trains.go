@@ -32,7 +32,7 @@ func TrainListPartial(ctx *h.RequestContext) *h.Partial {
 // GetKnownTrains returns the current list of trains.
 func GetKnownTrains() []components.Train {
 	// return knownTrains
-	resp, err := http.Get("http://localhost:8080/trains")
+	resp, err := http.Get(backendURL() + "/trains")
 	if err != nil {
 		panic(err)
 	}
@@ -105,7 +105,7 @@ func AddTrainPartial(ctx *h.RequestContext) *h.Partial {
 			h.Text("Invalid TZ number. Please enter a valid integer."),
 		))
 	}
-	resp, err := http.PostForm("http://localhost:8080/trains", url.Values{
+	resp, err := http.PostForm(backendURL()+"/trains", url.Values{
 		"tz":       {tz},
 		"baureihe": {baureihe},
 		"name":     {name},

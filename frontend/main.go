@@ -17,7 +17,7 @@ func main() {
 
 	h.Start(h.AppOpts{
 		ServiceLocator: locator,
-		LiveReload:     true,
+		LiveReload:     false,
 		Register: func(app *h.App) {
 			sub, err := fs.Sub(GetStaticAssets(), "assets/dist")
 

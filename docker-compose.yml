@@ -14,6 +14,31 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - db
+
+  backend:
+    image: trainspotter-backend
+    environment:
+      DATABASE_URL: "postgresql://trainspotter:trainspotter@db:5432/trainspotter"    
+    ports:
+      - "8080:8080"
+    networks:
+      - db
+      - backend
+
+  frontend:
+    image: trainspotter-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: "http://backend:8080"
+    networks:
+      - backend
 
 volumes:
   postgres_data:
+
+networks:
+  db:
+  backend:

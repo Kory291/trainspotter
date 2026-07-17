@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"net/http"
+	"fmt"
 
 	"trainspotter-backend/internal/api"
 )
@@ -17,6 +18,7 @@ var routes = func(r chi.Router) {
 }
 
 func main() {
+	fmt.Println("Starting server ...")
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
@@ -28,5 +30,6 @@ func main() {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 	routes(r)
-	http.ListenAndServe(":8080", r)
+	fmt.Println("registered routes")
+	http.ListenAndServe("0.0.0.0:8080", r)
 }

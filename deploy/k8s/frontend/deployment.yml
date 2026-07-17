@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trainspotter-frontend
+spec:
+  selector:
+    matchLabels:
+      app: trainspotter-frontend
+  template:
+    metadata:
+      labels:
+        app: trainspotter-frontend
+    spec:
+      containers:
+      - name: trainspotter-frontend
+        image: trainspotter-frontend:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: BACKEND_URL
+          value: "http://trainspotter-backend-service:8080"

@@ -3,10 +3,14 @@ package partials
 import (
 	"io"
 	"slices"
+	"time"
 	"trainspotter-frontend/components"
 
 	"encoding/json"
 	"net/http"
+	"net/url"
+	"strconv"
+	"fmt"
 
 	"github.com/maddalax/htmgo/framework/h"
 )
@@ -54,6 +58,64 @@ func SightList(sightings []components.Sight) *h.Element {
 	)
 }
 
-func PostSighting(ctx *h.RequestContext) {
-	
+func PostSightingPartial(ctx *h.RequestContext) *h.Partial {
+	place := ctx.FormValue("place")
+	date := ctx.FormValue("date")
+	tz := ctx.FormValue("tz")
+
+	errorPartial := h.NewPartial(h.Div(
+		h.Id("sighting-list"),
+		h.Class("text-vermilion text-sm"),
+		h.Text("Invalid TZ number. Please enter a valid integer"),
+	))
+
+	resp, err := http.PostForm("http://localhost:8080/sightings", url.Values{
+		"place": {place},
+		"date": {date},
+		"tz": {tz},
+	})
+	if err != nil || resp.StatusCode >= 400 {
+		return errorPartial
+	}
+	tzInt, err := strconv.Atoi(tz)
+	if err != nil {
+		return errorPartial
+	}
+	parsedDate, err := time.Parse("02.01.2006", date)
+	if err != nil {
+		fmt.Printf("Ther was an error when parsing the date: %v", err)
+		return errorPartial
+	}
+	fmt.Printf("parsedDate: %v\n", parsedDate)
+	knownSightings = append(knownSightings, components.Sight{
+		Train: tzInt,
+		Place: place,
+		Date: parsedDate,
+	})
+
+	return h.NewPartial(SightList(knownSightings))
+}
+
+func AddSightingForm() *h.Element {
+	return h.Div(
+		h.Class("bg-white border border-saffron rounded-lg shadow-sm p-6"),
+		h.H2(
+			h.Class("text-lg font-bold text-prussian mb-4"),
+			h.Text("Add a sighting"),
+		),
+		h.Form(
+			h.Attribute("id", "add-sighting-form"),
+			h.PostPartial(PostSightingPartial),
+			h.HxTarget("#sightings-list"),
+			h.Class("flex flex-col gap-4"),
+			components.FormField("Place", "place", "e.g. Berlin"),
+			components.FormField("Date", "date", "e.g. 15.01.2026"),
+			components.FormField("TZ", "tz", "e.g. 9001"),
+			h.Button(
+				h.Type("submit"),
+				h.Class("mt-2 bg-prussian text-champagne font-semibold rounded px-4 py-2 hover:bg-vermilion transition-colors"),
+				h.Text("Add sighting"),
+			),
+		),
+	)
 }

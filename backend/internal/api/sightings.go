@@ -3,10 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"trainspotter-backend/internal/database"
 	"time"
+	"strconv"
 )
 
 type ReturnedSighting struct {
@@ -42,13 +42,28 @@ func GetSightings(w http.ResponseWriter, r *http.Request) {
 
 func PostSighting(w http.ResponseWriter, r *http.Request) {
 	var sighting database.Sighting
-	requestBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		fmt.Printf("There went something wrong: %v", err)
-		http.Error(w, "Body was malformed", 400)
+
+	tz := r.FormValue("tz")
+	if tz == "" {
+		fmt.Printf("Ther was no tz detected\n")
+		http.Error(w, "Malformed data was provided", 400)
 		return
 	}
-	json.Unmarshal(requestBody, &sighting)
+	tzInt, err := strconv.Atoi(tz)
+	if err != nil {
+		fmt.Printf("Couldnt convert string %s to integer", tz)
+		http.Error(w, "Malformed data was provided", 400)
+		return
+	}
+	sighting.Train = tzInt
+	date := r.FormValue("date")
+	place := r.FormValue("place")
+
+	parsedDate, err := time.Parse("02.01.2006", date) 
+	sighting.Place = place
+	sighting.Date = parsedDate
+
+
 	err = database.AddSightingToDB(sighting)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

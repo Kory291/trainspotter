@@ -96,7 +96,15 @@ func AddTrainPartial(ctx *h.RequestContext) *h.Partial {
 	tz := ctx.FormValue("tz")
 	baureihe := ctx.FormValue("baureihe")
 	name := ctx.FormValue("name")
-
+	
+	tzInt, err := strconv.Atoi(tz)
+	if err != nil {
+		return h.NewPartial(h.Div(
+			h.Id("train-list"),
+			h.Class("text-vermilion text-sm"),
+			h.Text("Invalid TZ number. Please enter a valid integer."),
+		))
+	}
 	resp, err := http.PostForm("http://localhost:8080/trains", url.Values{
 		"tz":       {tz},
 		"baureihe": {baureihe},
@@ -107,14 +115,6 @@ func AddTrainPartial(ctx *h.RequestContext) *h.Partial {
 			h.Id("train-list"),
 			h.Class("text-vermilion text-sm"),
 			h.Text("Error adding train. Please try again."),
-		))
-	}
-	tzInt, err := strconv.Atoi(tz)
-	if err != nil {
-		return h.NewPartial(h.Div(
-			h.Id("train-list"),
-			h.Class("text-vermilion text-sm"),
-			h.Text("Invalid TZ number. Please enter a valid integer."),
 		))
 	}
 	knownTrains = append(knownTrains, components.Train{

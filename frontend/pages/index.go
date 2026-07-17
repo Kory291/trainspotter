@@ -25,6 +25,7 @@ func IndexPage(ctx *h.RequestContext) *h.Page {
 		components.Nav(ctx),
 		h.Div(
 			h.Class("p-6 max-w-2xl mx-auto"),
+			partials.AddSightingForm(),
 			h.H1(
 				h.Class("text-2xl font-bold text-prussian mb-6"),
 				h.Text("Recent Sightings"),

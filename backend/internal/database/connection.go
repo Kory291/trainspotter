@@ -4,37 +4,40 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
+	"sync"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func connect() (*pgxpool.Pool, error) {
-	conn, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
-	if err != nil {
-		fmt.Printf("Unable to connect to database: %v\n", err)
-		return nil, err
-	}
-	return conn, nil
+var (
+	pool     *pgxpool.Pool
+	poolOnce sync.Once
+	poolErr  error
+)
+
+func getPool() (*pgxpool.Pool, error) {
+	poolOnce.Do(func() {
+		pool, poolErr = pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+		if poolErr != nil {
+			fmt.Printf("Unable to connect to database: %v\n", poolErr)
+		}
+	})
+	return pool, poolErr
 }
 
 func queryDB(query string) (pgx.Rows, error) {
-
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
-	defer cancel()
-	
-	conn, err := connect()
+	conn, err := getPool()
 	if err != nil {
 		fmt.Println("Couldnt connect to DB")
 		return nil, err
 	}
 
-	rows, err := conn.Query(ctx, query)
+	rows, err := conn.Query(context.Background(), query)
 	if err != nil {
 		fmt.Printf("had a problem querying the DB %v\n", err)
 		return nil, err
 	}
-	
+
 	return rows, nil
 }

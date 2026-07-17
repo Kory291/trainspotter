@@ -7,9 +7,10 @@ import (
 )
 
 type Sight struct {
-	Train    int `json:"train"`
-	Place string `json:"place"`
-	Date     time.Time `json:"date"`
+	Id    int       `json:"id"`
+	Train int       `json:"train"`
+	Place string    `json:"place"`
+	Date  time.Time `json:"date"`
 }
 
 func SightCard(s Sight) *h.Element {

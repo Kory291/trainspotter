@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"trainspotter-backend/internal/database"
-	"time"
 	"strconv"
+	"time"
+	"trainspotter-backend/internal/database"
 )
 
 type ReturnedSighting struct {
-	Train int `json:"train"`
-	Place string `json:"place"`
-	Date time.Time `json:"date"`
+	Id    int       `json:"id"`
+	Train int       `json:"train"`
+	Place string    `json:"place"`
+	Date  time.Time `json:"date"`
 }
 
 func GetSightings(w http.ResponseWriter, r *http.Request) {
@@ -26,9 +27,10 @@ func GetSightings(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, sighting := range sightings {
 		returnedSightings = append(returnedSightings, ReturnedSighting{
+			Id:    sighting.Id,
 			Train: sighting.Train,
 			Place: sighting.Place,
-			Date: sighting.Date,
+			Date:  sighting.Date,
 		})
 	}
 	jsonResponse, err := json.Marshal(returnedSightings)
@@ -59,10 +61,9 @@ func PostSighting(w http.ResponseWriter, r *http.Request) {
 	date := r.FormValue("date")
 	place := r.FormValue("place")
 
-	parsedDate, err := time.Parse("02.01.2006", date) 
+	parsedDate, err := time.Parse("02.01.2006", date)
 	sighting.Place = place
 	sighting.Date = parsedDate
-
 
 	err = database.AddSightingToDB(sighting)
 	if err != nil {

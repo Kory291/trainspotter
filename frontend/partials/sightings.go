@@ -3,14 +3,11 @@ package partials
 import (
 	"io"
 	"slices"
-	"time"
 	"trainspotter-frontend/components"
 
 	"encoding/json"
 	"net/http"
 	"net/url"
-	"strconv"
-	"fmt"
 
 	"github.com/maddalax/htmgo/framework/h"
 )
@@ -71,27 +68,14 @@ func PostSightingPartial(ctx *h.RequestContext) *h.Partial {
 
 	resp, err := http.PostForm("http://localhost:8080/sightings", url.Values{
 		"place": {place},
-		"date": {date},
-		"tz": {tz},
+		"date":  {date},
+		"tz":    {tz},
 	})
 	if err != nil || resp.StatusCode >= 400 {
 		return errorPartial
 	}
-	tzInt, err := strconv.Atoi(tz)
-	if err != nil {
-		return errorPartial
-	}
-	parsedDate, err := time.Parse("02.01.2006", date)
-	if err != nil {
-		fmt.Printf("Ther was an error when parsing the date: %v", err)
-		return errorPartial
-	}
-	fmt.Printf("parsedDate: %v\n", parsedDate)
-	knownSightings = append(knownSightings, components.Sight{
-		Train: tzInt,
-		Place: place,
-		Date: parsedDate,
-	})
+
+	GetSightings()
 
 	return h.NewPartial(SightList(knownSightings))
 }

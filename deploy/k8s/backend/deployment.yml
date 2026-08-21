@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trainspotter-backend
+spec:
+  selector:
+    matchLabels:
+      app: trainspotter-backend
+  template:
+    metadata:
+      labels:
+        app: trainspotter-backend
+    spec:
+      containers:
+      - name: trainspotter-backend
+        image: trainspotter-backend:v1
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: backend-secret

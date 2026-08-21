@@ -21,9 +21,6 @@ docker compose up
 1. Build and load images into the cluster:
 ```bash
 make build
-# for minikube:
-minikube image load trainspotter-frontend:v1
-minikube image load trainspotter-backend:v1
 ```
 
 2. Create secrets:

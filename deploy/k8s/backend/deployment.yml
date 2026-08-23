@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: trainspotter-backend
-        image: trainspotter-backend:v1
+        image: ghcr.io/kory291/trainspotter/trainspotter-backend:v1.0.3
         ports:
         - containerPort: 8080
         envFrom:

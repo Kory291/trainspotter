@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: trainspotter-frontend
-        image: trainspotter-frontend:v1
+        image: ghcr.io/kory291/trainspotter/trainspotter-frontend:v1.0.3
         ports:
         - containerPort: 3000
         env:

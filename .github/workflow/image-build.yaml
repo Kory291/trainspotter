@@ -1,0 +1,31 @@
+name: Publish docker image
+
+on:
+  push:  
+    tags:
+       - 'v*.*.*'
+  workflow_dispatch: 
+
+permissions:
+  contents: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    container: docker:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Build image
+        run: |
+          echo ${{ secrets.REGISTRY_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          make build
+          docker tag trainspotter-frontend:${{ github.ref_name }} ghcr.io/kory291/trainspotter-frontend:${{ github.ref_name }}
+          docker tag trainspotter-backend:${{ github.ref_name }} ghcr.io/kory291/trainspotter-backend:${{ github.ref_name }}
+          docker push ghcr.io/kory291/trainspotter-frontend:${{ github.ref_name }}
+          docker push ghcr.io/kory291/trainspotter-backend:${{ github.ref_name }}
+
+

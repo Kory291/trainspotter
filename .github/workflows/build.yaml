@@ -22,9 +22,9 @@ jobs:
       - name: Build image
         run: |
           echo ${{ secrets.REGISTRY_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          docker build -f frontend/Dockerfile -t ghcr.io/kory291/trainspotter-frontend:${{ github.ref_name }} ./frontend
-          docker build -f backend/Dockerfile -t ghcr.io/kory291/trainspotter-backend:${{ github.ref_name }} ./backend
-          docker push ghcr.io/kory291/trainspotter-frontend:${{ github.ref_name }}
-          docker push ghcr.io/kory291/trainspotter-backend:${{ github.ref_name }}
+          docker build -f frontend/Dockerfile -t ghcr.io/kory291/trainspotter/trainspotter-frontend:${{ github.ref_name }} ./frontend
+          docker build -f backend/Dockerfile -t ghcr.io/kory291/trainspotter/trainspotter-backend:${{ github.ref_name }} ./backend
+          docker push ghcr.io/kory291/trainspotter/trainspotter-frontend:${{ github.ref_name }}
+          docker push ghcr.io/kory291/trainspotter/trainspotter-backend:${{ github.ref_name }}
 
 

@@ -5,6 +5,24 @@ I want to collect them all :)
 
 ## Deployment
 
+### DB stuff
+
+```postgres
+CREATE TABLE trains (
+    tz INTEGER PRIMARY KEY,
+    baureihe VARCHAR(255),
+    name VARCHAR(255)
+);
+
+CREATE TABLE public.sightings (
+    id BIGSERIAL PRIMARY KEY,
+    place VARCHAR(255),
+    date DATE,
+    train INTEGER,
+    CONSTRAINT sightings_train_fkey FOREIGN KEY (train) REFERENCES trains(tz)
+);
+```
+
 ### Local (Docker Compose)
 
 ```bash
